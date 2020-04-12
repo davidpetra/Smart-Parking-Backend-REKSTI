@@ -1,0 +1,27 @@
+{
+  "name": "smart-parking-reksti",
+  "version": "1.0.0",
+  "description": "Tugas Besar REKSTI",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidpetra/Smart-Parking-REKSTI.git"
+  },
+  "author": "smart parking",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/davidpetra/Smart-Parking-REKSTI/issues"
+  },
+  "homepage": "https://github.com/davidpetra/Smart-Parking-REKSTI#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "pg": "^8.0.2",
+    "pg-error": "^1.0.0",
+    "pg-promise": "^10.5.0"
+  }
+}
