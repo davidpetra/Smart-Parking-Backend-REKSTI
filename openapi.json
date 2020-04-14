@@ -1,0 +1,610 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Smart Parking",
+    "description": "Layanan Parkir Pintar yang diimplementasi untuk mendukung konsep Smart City",
+    "contact": {
+      "email": "info@smartparking.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://smartparking-reksti.herokuapp.com"
+    }
+  ],
+  "tags": [
+    {
+      "name": "parkiran",
+      "description": "data ketersediaan slot parkir"
+    },
+    {
+      "name": "tiket",
+      "description": "data tiket parkir"
+    },
+    {
+      "name": "pembayaran",
+      "description": "data tagihan parkir"
+    }
+  ],
+  "paths": {
+    "/parkiran": {
+      "get": {
+        "tags": [
+          "parkiran"
+        ],
+        "summary": "Menampilkan seluruh visualisasi slot parkir yang ada",
+        "description": "Menampilkan seluruh visualisasi slot parkir yang ada",
+        "responses": {
+          "200": {
+            "description": "Berhasil menampilkan seluruh data slot parkir!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Parkiran"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Requests"
+          },
+          "404": {
+            "description": "Data slot parkir yang kamu cari tidak ditemukan!"
+          }
+        }
+      }
+    },
+    "/parkiran/kosong": {
+      "get": {
+        "tags": [
+          "parkiran"
+        ],
+        "summary": "Menampilkan seluruh visualisasi slot parkir yang kosong",
+        "description": "Menampilkan seluruh visualisasi slot parkir yang kosong",
+        "responses": {
+          "200": {
+            "description": "Berhasil Menampilkan seluruh data slot parkir yang kosong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Parkiran"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Requests"
+          },
+          "404": {
+            "description": "Data slot parkir yang kamu cari tidak ditemukan!"
+          }
+        }
+      }
+    },
+    "/parkiran/isi": {
+      "get": {
+        "tags": [
+          "parkiran"
+        ],
+        "summary": "Menampilkan seluruh visualisasi slot parkir yang terisi",
+        "description": "Menampilkan seluruh visualisasi slot parkir yang terisi",
+        "responses": {
+          "200": {
+            "description": "Berhasil Menampilkan seluruh data slot parkir yang terisi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Parkiran"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Requests"
+          },
+          "404": {
+            "description": "Data slot parkir yang kamu cari tidak ditemukan!"
+          }
+        }
+      }
+    },
+    "/parkiran/{id}": {
+      "put": {
+        "tags": [
+          "parkiran"
+        ],
+        "summary": "Melakukan edit data slot parkir",
+        "description": "Melakukan edit data slot parkir",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "slot_parkir",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Parkiran"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Berhasil mengubah data slot parkir",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Parkiran"
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/tiket": {
+      "get": {
+        "tags": [
+          "tiket"
+        ],
+        "summary": "Menampilkan seluruh data tiket parkir",
+        "description": "Menampilkan seluruh data tiket parkir",
+        "responses": {
+          "200": {
+            "description": "Berhasil menampilkan seluruh data tiket parkir",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Tiket"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Requests"
+          },
+          "404": {
+            "description": "Data tiket parkir yang kamu cari tidak ditemukan"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "tiket"
+        ],
+        "summary": "Membuat data tiket baru",
+        "description": "Membuat data tiket baru",
+        "requestBody": {
+          "description": "Data tiket",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Tiket"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Berhasil membuat data tiket baru",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Tiket"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Requests"
+          }
+        }
+      }
+    },
+    "/tiket/{id}": {
+      "get": {
+        "tags": [
+          "tiket"
+        ],
+        "summary": "Menampilkan data tiket parkir berdasarkan id tiket",
+        "description": "Menampilkan data tiket parkir berdasarkan id tiket parkir",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id_tiket",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil menampilkan data tiket parkir berdasarkan id tiket",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Tiket"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Data tiket yang kamu cari tidak ditemukan"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "tiket"
+        ],
+        "summary": "Melakukan edit data tiket",
+        "description": "Melakukan edit data tiket",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id_tiket",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Tiket"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Berhasil mengubah data tiket",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Tiket"
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid input"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "tiket"
+        ],
+        "summary": "Menghapus data tiket",
+        "description": "Menghapus data tiket",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id_tiket",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil menghapus data tiket",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Tiket"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        }
+      }
+    },
+    "/pembayaran": {
+      "get": {
+        "tags": [
+          "pembayaran"
+        ],
+        "summary": "Menampilkan seluruh data pembayaran",
+        "description": "Menampilkan seluruh data pembayaran",
+        "responses": {
+          "200": {
+            "description": "Berhasil menampilkan seluruh data pembayaran",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Pembayaran"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Requests"
+          },
+          "404": {
+            "description": "Data pembayaran yang kamu cari tidak ditemukan"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "pembayaran"
+        ],
+        "summary": "Membuat data pembayaran baru",
+        "description": "Membuat data pembayaran baru",
+        "requestBody": {
+          "description": "Data pembayaran",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Pembayaran"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Berhasil membuat data pembayaran baru",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Pembayaran"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Requests"
+          }
+        }
+      }
+    },
+    "/pembayaran/{id}": {
+      "get": {
+        "tags": [
+          "pembayaran"
+        ],
+        "summary": "Menampilkan data pembayaran berdasarkan id bayar",
+        "description": "Menampilkan data pembayaran berdasarkan id bayar",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id_bayar",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil menampilkan data pembayaran berdasarkan id bayar",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Pembayaran"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Data pembayaran yang kamu cari tidak ditemukan"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "pembayaran"
+        ],
+        "summary": "Melakukan edit data pembayaran",
+        "description": "Melakukan edit data pembayaran",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id_bayar",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Pembayaran"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Berhasil mengubah data pembayaran",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Pembayaran"
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid input"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "pembayaran"
+        ],
+        "summary": "Menghapus data pembayaran",
+        "description": "Menghapus data pembayaran",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id_bayar",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil menghapus data pembayaran",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Pembayaran"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Parkiran": {
+        "type": "object",
+        "properties": {
+          "slot_parkir": {
+            "type": "string"
+          },
+          "availability": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Tiket": {
+        "type": "object",
+        "properties": {
+          "id_tiket": {
+            "type": "integer"
+          },
+          "jam_masuk": {
+            "type": "string"
+          },
+          "jam_keluar": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "Pembayaran": {
+        "type": "object",
+        "properties": {
+          "id_bayar": {
+            "type": "integer"
+          },
+          "id_tiket": {
+            "type": "integer"
+          },
+          "durasi_parkir": {
+            "type": "integer"
+          },
+          "total_tagihan": {
+            "type": "integer"
+          },
+          "status_bayar": {
+            "type": "boolean"
+          },
+          "jenis_pembayaran": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
