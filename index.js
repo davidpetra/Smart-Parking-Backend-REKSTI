@@ -277,6 +277,10 @@ function deletePembayaran(id) {
 }
 
 // ENDPOINT API
+app.get("/", function (req, res) {
+    res.redirect("/parkiran")
+});
+
 // Parkiran
 app.get("/parkiran", function (req, res) {
     getParkiran()
