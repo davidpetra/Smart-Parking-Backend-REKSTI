@@ -5,6 +5,7 @@ const express = require("express"),
     bodyParser = require("body-parser");
 
 const app = express();
+const request = require('request');
 
 // Enabling CORS
 app.use(function (req, res, next) {
@@ -133,20 +134,23 @@ function getTiketID(id) {
     });
 }
 
-function makeTiket(data) {
+function makeTiket() {
     return new Promise((resolve, reject) => {
+        var jam_masuk = Math.floor(Date.now() / 1000);
+        var jam_keluar = null;
+        var status = 'masuk';
+
         db.none(
-            "INSERT INTO tiket(id_tiket, jam_masuk, jam_keluar, status) VALUES($1,$2,$3,$4)",
+            "INSERT INTO tiket(jam_masuk, jam_keluar, status) VALUES(to_timestamp($1),$2,$3)",
             [
-                data.id_tiket,
-                data.jam_masuk,
-                data.jam_keluar,
-                data.status,
+                jam_masuk,
+                jam_keluar,
+                status,
             ]
         )
             .then(function () {
                 console.log("Success make a new tiket");
-                resolve(data);
+                resolve();
             })
             .catch(err => {
                 console.log(err);
@@ -155,19 +159,22 @@ function makeTiket(data) {
     });
 }
 
-function updateTiket(id, data) {
+function updateTiket(id) {
     return new Promise((resolve, reject) => {
+        var jam_keluar = Math.floor(Date.now() / 1000);
+        var status = 'keluar';
+
         db.none(
-            "UPDATE tiket SET jam_keluar = $1, status = $2 WHERE id_tiket = $3",
+            "UPDATE tiket SET jam_keluar = to_timestamp($1), status = $2 WHERE id_tiket = $3",
             [
-                data.jam_keluar,
-                data.status,
+                jam_keluar,
+                status,
                 id
             ]
         )
             .then(function () {
                 console.log("Success update data tiket");
-                resolve(data);
+                resolve();
             })
             .catch(err => {
                 console.log(err);
@@ -215,27 +222,68 @@ function getPembayaranID(id) {
     });
 }
 
+function duration(t0, t1) {
+    let d = (new Date(t1)) - (new Date(t0));
+    let weekdays = Math.floor(d / 1000 / 60 / 60 / 24 / 7);
+    let days = Math.floor(d / 1000 / 60 / 60 / 24 - weekdays * 7);
+    let hours = Math.floor(d / 1000 / 60 / 60 - weekdays * 7 * 24 - days * 24);
+    let minutes = Math.floor(d / 1000 / 60 - weekdays * 7 * 24 * 60 - days * 24 * 60 - hours * 60);
+    let seconds = Math.floor(d / 1000 - weekdays * 7 * 24 * 60 * 60 - days * 24 * 60 * 60 - hours * 60 * 60 - minutes * 60);
+    let milliseconds = Math.floor(d - weekdays * 7 * 24 * 60 * 60 * 1000 - days * 24 * 60 * 60 * 1000 - hours * 60 * 60 * 1000 - minutes * 60 * 1000 - seconds * 1000);
+    let t = {};
+    ['weekdays', 'days', 'hours', 'minutes', 'seconds', 'milliseconds'].forEach(q => {
+        if (eval(q) > 0) {
+            t[q] = eval(q);
+        } else {
+            t[q] = 0;
+        }
+    });
+    return t;
+}
+
 function makePembayaran(data) {
     return new Promise((resolve, reject) => {
-        db.none(
-            "INSERT INTO pembayaran(id_bayar, id_tiket, durasi_parkir, total_tagihan, status_bayar, jenis_pembayaran) VALUES($1,$2,$3,$4,$5,$6)",
-            [
-                data.id_bayar,
-                data.id_tiket,
-                data.durasi_parkir,
-                data.total_tagihan,
-                data.status_bayar,
-                data.jenis_pembayaran
-            ]
-        )
-            .then(function () {
-                console.log("Success make a new pembayaran");
-                resolve(data);
-            })
-            .catch(err => {
-                console.log(err);
-                reject(err);
-            });
+        request('http://localhost:3000/tiket/' + data.id_tiket, function (error, response, body) {
+            let isi = JSON.parse(body);
+            let jam_masuk = isi['jam_masuk'];
+            let jam_keluar = isi['jam_keluar'];
+            let durasi = duration(jam_masuk, jam_keluar);
+            let durasi_hari = durasi['days'];
+            let durasi_jam = durasi['hours'];
+            let durasi_menit = durasi['minutes'];
+            let durasi_detik = durasi['seconds'];
+            let gabung = [durasi_hari, durasi_jam, durasi_menit, durasi_detik];
+
+            if (gabung[3] > 0 || gabung[2] > 0) {
+                gabung[3] = 0;
+                gabung[2] = 0;
+                gabung[1] += 1;
+            }
+
+            let durasi_parkir = gabung[1];
+            let total_tagihan = 3000;
+            let status_bayar = false;
+
+            db.none(
+                "INSERT INTO pembayaran(id_tiket, durasi_parkir, total_tagihan, status_bayar) VALUES($1,$2,$3,$4)",
+                [
+                    data.id_tiket,
+                    durasi_parkir,
+                    total_tagihan,
+                    status_bayar,
+                ]
+            )
+                .then(function () {
+                    console.log("Success make a new pembayaran");
+                    resolve(data);
+                })
+                .catch(err => {
+                    console.log(err);
+                    reject(err);
+                });
+        });
+
+
     });
 }
 
@@ -391,9 +439,9 @@ app.get("/tiket/:id", function (req, res) {
 });
 
 app.post("/tiket", function (req, res) {
-    makeTiket(req.body)
+    makeTiket()
         .then(result => {
-            console.log(result);
+            console.log();
             res.json({
                 "response-code": "200",
                 message: "Berhasil membuat tiket baru!"
@@ -409,9 +457,9 @@ app.post("/tiket", function (req, res) {
 });
 
 app.put("/tiket/:id", function (req, res) {
-    updateTiket(req.params.id, req.body)
+    updateTiket(req.params.id)
         .then(result => {
-            console.log(result);
+            console.log();
             res.json({
                 "response-code": "200",
                 message: "Berhasil mengupdate data tiket!"
@@ -546,6 +594,6 @@ app.delete("/pembayaran/:id", function (req, res) {
 // Menjalankan Server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log('Our app is running on port ${ PORT }');
+    console.log('Our app is running on port ', PORT);
 });
 //app.listen(3000);
