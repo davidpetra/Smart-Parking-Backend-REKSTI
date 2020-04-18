@@ -51,6 +51,27 @@ const db = pgp(CONNECT_DB);
 const QueryResultError = pgp.errors.QueryResultError;
 const QueryResultCode = pgp.errors.queryResultErrorCode;
 
+// Functions
+function duration(t0, t1) {
+    let d = (new Date(t1)) - (new Date(t0));
+    let weekdays = Math.floor(d / 1000 / 60 / 60 / 24 / 7);
+    let days = Math.floor(d / 1000 / 60 / 60 / 24 - weekdays * 7);
+    let hours = Math.floor(d / 1000 / 60 / 60 - weekdays * 7 * 24 - days * 24);
+    let minutes = Math.floor(d / 1000 / 60 - weekdays * 7 * 24 * 60 - days * 24 * 60 - hours * 60);
+    let seconds = Math.floor(d / 1000 - weekdays * 7 * 24 * 60 * 60 - days * 24 * 60 * 60 - hours * 60 * 60 - minutes * 60);
+    let milliseconds = Math.floor(d - weekdays * 7 * 24 * 60 * 60 * 1000 - days * 24 * 60 * 60 * 1000 - hours * 60 * 60 * 1000 - minutes * 60 * 1000 - seconds * 1000);
+    let t = {};
+    ['weekdays', 'days', 'hours', 'minutes', 'seconds', 'milliseconds'].forEach(q => {
+        if (eval(q) > 0) {
+            t[q] = eval(q);
+        } else {
+            t[q] = 0;
+        }
+    });
+    return t;
+}
+
+
 // QUERY
 // Parkiran
 function getParkiran() {
@@ -222,25 +243,6 @@ function getPembayaranID(id) {
     });
 }
 
-function duration(t0, t1) {
-    let d = (new Date(t1)) - (new Date(t0));
-    let weekdays = Math.floor(d / 1000 / 60 / 60 / 24 / 7);
-    let days = Math.floor(d / 1000 / 60 / 60 / 24 - weekdays * 7);
-    let hours = Math.floor(d / 1000 / 60 / 60 - weekdays * 7 * 24 - days * 24);
-    let minutes = Math.floor(d / 1000 / 60 - weekdays * 7 * 24 * 60 - days * 24 * 60 - hours * 60);
-    let seconds = Math.floor(d / 1000 - weekdays * 7 * 24 * 60 * 60 - days * 24 * 60 * 60 - hours * 60 * 60 - minutes * 60);
-    let milliseconds = Math.floor(d - weekdays * 7 * 24 * 60 * 60 * 1000 - days * 24 * 60 * 60 * 1000 - hours * 60 * 60 * 1000 - minutes * 60 * 1000 - seconds * 1000);
-    let t = {};
-    ['weekdays', 'days', 'hours', 'minutes', 'seconds', 'milliseconds'].forEach(q => {
-        if (eval(q) > 0) {
-            t[q] = eval(q);
-        } else {
-            t[q] = 0;
-        }
-    });
-    return t;
-}
-
 function makePembayaran(data) {
     return new Promise((resolve, reject) => {
         request('http://localhost:3000/tiket/' + data.id_tiket, function (error, response, body) {
@@ -260,8 +262,28 @@ function makePembayaran(data) {
                 gabung[1] += 1;
             }
 
+            if (gabung[0] > 0) {
+                gabung[1] += 24 * gabung[0];
+                gabung[0] = 0;
+            }
+
             let durasi_parkir = gabung[1];
-            let total_tagihan = 3000;
+            let total_tagihan = 0;
+
+            if (durasi_parkir > 1 && durasi_parkir < 13) {              // durasi parkir 2 - 12
+                total_tagihan = 3000 + (2000 * (durasi_parkir - 1));
+                console.log("Total tagihan parkir = " + total_tagihan)
+            } else if (durasi_parkir >= 13) {
+                total_tagihan = 25000;
+                console.log("Total tagihan parkir = " + total_tagihan)
+            } else if (durasi_parkir === 1) {
+                total_tagihan = 3000;
+                console.log("Total tagihan parkir = " + total_tagihan)
+            } else {
+                console.log("Durasi parkir salah!")
+                console.log(total_tagihan)
+            }
+
             let status_bayar = false;
 
             db.none(
@@ -289,12 +311,12 @@ function makePembayaran(data) {
 
 function updatePembayaran(id, data) {
     return new Promise((resolve, reject) => {
+        let status_bayar = true;
+
         db.none(
-            "UPDATE pembayaran SET durasi_parkir = $1, total_tagihan = $2, status_bayar = $3, jenis_pembayaran = $4 WHERE id_bayar = $5",
+            "UPDATE pembayaran SET status_bayar = $1, jenis_pembayaran = $2 WHERE id_bayar = $3",
             [
-                data.durasi_parkir,
-                data.total_tagihan,
-                data.status_bayar,
+                status_bayar,
                 data.jenis_pembayaran,
                 id
             ]
