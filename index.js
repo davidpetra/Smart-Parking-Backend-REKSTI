@@ -157,9 +157,9 @@ function getTiketID(id) {
 
 function makeTiket() {
     return new Promise((resolve, reject) => {
-        var jam_masuk = Math.floor(Date.now() / 1000);
-        var jam_keluar = null;
-        var status = 'masuk';
+        let jam_masuk = Math.floor(Date.now() / 1000);
+        let jam_keluar = null;
+        let status = 'masuk';
 
         db.one(
             "INSERT INTO tiket(jam_masuk, jam_keluar, status) VALUES(to_timestamp($1),$2,$3) RETURNING *",
@@ -183,8 +183,8 @@ function makeTiket() {
 
 function updateTiket(id) {
     return new Promise((resolve, reject) => {
-        var jam_keluar = Math.floor(Date.now() / 1000);
-        var status = 'keluar';
+        let jam_keluar = Math.floor(Date.now() / 1000);
+        let status = 'keluar';
 
         db.one(
             "UPDATE tiket SET jam_keluar = to_timestamp($1), status = $2 WHERE id_tiket = $3 RETURNING *",
@@ -408,10 +408,12 @@ app.get("/parkiran/isi", function (req, res) {
 app.put("/parkiran/:id", function (req, res) {
     updateSlotParkiran(req.params.id, req.body)
         .then(result => {
+            console.log();
             console.log(result);
             res.json({
                 "response-code": "200",
-                message: "Berhasil mengupdate slot parkiran!"
+                message: "Berhasil mengupdate slot parkiran!",
+                result
             });
         })
         .catch(err => {
@@ -472,10 +474,11 @@ app.post("/tiket", function (req, res) {
     makeTiket()
         .then(result => {
             console.log();
-            res.json({
+            res.send({
                 "response-code": "200",
-                message: "Berhasil membuat tiket baru!"
-            });
+                message: "Berhasil membuat tiket baru!",
+                result
+            })
         })
         .catch(err => {
             console.log(err);
@@ -492,7 +495,8 @@ app.put("/tiket/:id", function (req, res) {
             console.log();
             res.json({
                 "response-code": "200",
-                message: "Berhasil mengupdate data tiket!"
+                message: "Berhasil mengupdate data tiket!",
+                result
             });
         })
         .catch(err => {
@@ -573,7 +577,8 @@ app.post("/pembayaran", function (req, res) {
             console.log();
             res.json({
                 "response-code": "200",
-                message: "Berhasil mencatat pembayaran baru!"
+                message: "Berhasil mencatat pembayaran baru!",
+                result
             });
         })
         .catch(err => {
@@ -591,7 +596,8 @@ app.put("/pembayaran/:id", function (req, res) {
             console.log();
             res.json({
                 "response-code": "200",
-                message: "Berhasil mengupdate data pembayaran!"
+                message: "Berhasil mengupdate data pembayaran!",
+                result
             });
         })
         .catch(err => {
