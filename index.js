@@ -112,15 +112,15 @@ function getParkiranIsi() {
 
 function updateSlotParkiran(id, data) {
     return new Promise((resolve, reject) => {
-        db.none(
-            "UPDATE parkiran SET availability = $1 WHERE slot_parkir = $2",
+        db.one(
+            "UPDATE parkiran SET availability = $1 WHERE slot_parkir = $2 RETURNING *",
             [
                 data.availability,
                 id
             ]
         )
-            .then(function () {
-                console.log("Success update slot parkiran");
+            .then(data => {
+                console.log("Success update slot parkiran on slot_parkir: " + id);
                 resolve(data);
             })
             .catch(err => {
@@ -161,17 +161,18 @@ function makeTiket() {
         var jam_keluar = null;
         var status = 'masuk';
 
-        db.none(
-            "INSERT INTO tiket(jam_masuk, jam_keluar, status) VALUES(to_timestamp($1),$2,$3)",
+        db.one(
+            "INSERT INTO tiket(jam_masuk, jam_keluar, status) VALUES(to_timestamp($1),$2,$3) RETURNING *",
             [
                 jam_masuk,
                 jam_keluar,
                 status,
             ]
         )
-            .then(function () {
-                console.log("Success make a new tiket");
-                resolve();
+            .then(data => {
+                console.log("Success make a new tiket with id_tiket: " + data.id_tiket)
+                console.log(data)
+                resolve(data);
             })
             .catch(err => {
                 console.log(err);
@@ -185,17 +186,18 @@ function updateTiket(id) {
         var jam_keluar = Math.floor(Date.now() / 1000);
         var status = 'keluar';
 
-        db.none(
-            "UPDATE tiket SET jam_keluar = to_timestamp($1), status = $2 WHERE id_tiket = $3",
+        db.one(
+            "UPDATE tiket SET jam_keluar = to_timestamp($1), status = $2 WHERE id_tiket = $3 RETURNING *",
             [
                 jam_keluar,
                 status,
                 id
             ]
         )
-            .then(function () {
-                console.log("Success update data tiket");
-                resolve();
+            .then(data => {
+                console.log("Success update data tiket with id_tiket: " + id);
+                console.log(data)
+                resolve(data);
             })
             .catch(err => {
                 console.log(err);
@@ -206,7 +208,7 @@ function updateTiket(id) {
 
 function deleteTiket(id) {
     return new Promise((resolve, reject) => {
-        db.none("DELETE FROM tiket WHERE id_tiket = $1", id)
+        db.result("DELETE FROM tiket WHERE id_tiket = $1", id)
             .then(function () {
                 //console.log("Success delete tiket");
                 resolve("Success delete tiket");
@@ -272,22 +274,26 @@ function makePembayaran(data) {
 
             if (durasi_parkir > 1 && durasi_parkir < 13) {              // durasi parkir 2 - 12
                 total_tagihan = 3000 + (2000 * (durasi_parkir - 1));
+                console.log()
                 console.log("Total tagihan parkir = " + total_tagihan)
             } else if (durasi_parkir >= 13) {
                 total_tagihan = 25000;
+                console.log()
                 console.log("Total tagihan parkir = " + total_tagihan)
             } else if (durasi_parkir === 1) {
                 total_tagihan = 3000;
+                console.log()
                 console.log("Total tagihan parkir = " + total_tagihan)
             } else {
+                console.log()
                 console.log("Durasi parkir salah!")
                 console.log(total_tagihan)
             }
 
             let status_bayar = false;
 
-            db.none(
-                "INSERT INTO pembayaran(id_tiket, durasi_parkir, total_tagihan, status_bayar) VALUES($1,$2,$3,$4)",
+            db.one(
+                "INSERT INTO pembayaran(id_tiket, durasi_parkir, total_tagihan, status_bayar) VALUES($1,$2,$3,$4) RETURNING *",
                 [
                     data.id_tiket,
                     durasi_parkir,
@@ -295,8 +301,9 @@ function makePembayaran(data) {
                     status_bayar,
                 ]
             )
-                .then(function () {
-                    console.log("Success make a new pembayaran");
+                .then(data => {
+                    console.log("Success make a new pembayaran with id_bayar: " + data.id_bayar);
+                    console.log(data)
                     resolve(data);
                 })
                 .catch(err => {
@@ -313,16 +320,17 @@ function updatePembayaran(id, data) {
     return new Promise((resolve, reject) => {
         let status_bayar = true;
 
-        db.none(
-            "UPDATE pembayaran SET status_bayar = $1, jenis_pembayaran = $2 WHERE id_bayar = $3",
+        db.one(
+            "UPDATE pembayaran SET status_bayar = $1, jenis_pembayaran = $2 WHERE id_bayar = $3 RETURNING *",
             [
                 status_bayar,
                 data.jenis_pembayaran,
                 id
             ]
         )
-            .then(function () {
-                console.log("Success update data pembayaran");
+            .then(data => {
+                console.log("Success update data pembayaran with id_bayar: " + id);
+                console.log(data)
                 resolve(data);
             })
             .catch(err => {
@@ -334,7 +342,7 @@ function updatePembayaran(id, data) {
 
 function deletePembayaran(id) {
     return new Promise((resolve, reject) => {
-        db.none("DELETE FROM pembayaran WHERE id_bayar = $1", id)
+        db.result("DELETE FROM pembayaran WHERE id_bayar = $1", id)
             .then(function () {
                 //console.log("Success delete pembayaran");
                 resolve("Success delete pembayaran");
@@ -562,7 +570,7 @@ app.get("/pembayaran/:id", function (req, res) {
 app.post("/pembayaran", function (req, res) {
     makePembayaran(req.body)
         .then(result => {
-            console.log(result);
+            console.log();
             res.json({
                 "response-code": "200",
                 message: "Berhasil mencatat pembayaran baru!"
@@ -580,7 +588,7 @@ app.post("/pembayaran", function (req, res) {
 app.put("/pembayaran/:id", function (req, res) {
     updatePembayaran(req.params.id, req.body)
         .then(result => {
-            console.log(result);
+            console.log();
             res.json({
                 "response-code": "200",
                 message: "Berhasil mengupdate data pembayaran!"
