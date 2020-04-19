@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="apple-touch-icon" sizes="76x76" href="./assets/img/apple-icon.png">
+  <link rel="icon" type="image/png" href="./assets/img/favicon.png">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>
+    Smart Parking
+  </title>
+  <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+  <!--     Fonts and icons     -->
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+  <!-- CSS Files -->
+  <link href="./assets/css/material-kit.css?v=2.0.7" rel="stylesheet" />
+  <!-- CSS Just for demo purpose, don't include it in your project -->
+  <link href="./assets/demo/demo.css" rel="stylesheet" />
+  <script src="script/parkir.js"></script>
+</head>
+
+<body class="index-page sidebar-collapse">
+  
+  <nav class="navbar navbar-default navbar-expand-lg" role="navigation-demo">
+    <div class="container">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-translate">
+        <a class="navbar-brand" href="#0">Kelompok 8</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="navbar-toggler-icon"></span>
+          <span class="navbar-toggler-icon"></span>
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a href="javascript:;" class="btn btn-rose btn-raised btn-round ">
+              Masuk Parkir
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="keluar.html" class="nav-link">
+              Keluar Parkir
+            </a>
+          </li>
+          <!-- <li class="nav-item">
+            <a href="javascript:;" class="btn btn-rose btn-raised btn-round " data-toggle="dropdown">
+              Register
+            </a>
+          </li> -->
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-->
+  </nav>
+  <div class="section">
+    <div class="container text-center">
+      <div class="row">
+        <div class="col-md-8 mx-auto text-center">
+          <h2>Tiket parkir</h2>
+          <h4>Berikut ini adalah tiket parkir anda</h4>
+          <!-- <a href="#" class="btn btn-primary btn-lg">
+            Masuk Parkir
+          </a> -->
+          <div class="row">
+            <div class="col-md-8 mx-auto text-center">
+              <b>ID Tiket:</b>
+            </div>
+            <div class="col-md-8 mx-auto text-center">
+              <input class="text-center" id="id_tiket">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-8 mx-auto text-center">
+              <b>Jam Masuk:</b>
+            </div>
+            <div class="col-md-8 mx-auto text-center">
+              <input class="text-center" id="jam_masuk">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-8 mx-auto text-center">
+              <b>Status:</b>
+            </div>
+            <div class="col-md-8 mx-auto text-center">
+              <input class="text-center" id="status">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> 
+  <div class="section">
+    <div class="container text-center">
+      <div class="row">
+        <div class="col-md-8 mx-auto text-center">
+          <h2>Tempat parkir</h2>
+          <h4>Lantai 1</h4>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-8 mx-auto text-center">
+         <button id="A1">A01</button>
+          <button id="A2">A02</button>
+          <button id="A3">A03</button>
+          <button id="A4">A04</button>
+          <button id="A5">A05</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-8 mx-auto text-center">
+          <button id="A6">A06</button>
+          <button id="A7">A07</button>
+          <button id="A8">A08</button>
+          <button id="A9">A09</button>
+          <button id="A10">A10</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-8 mx-auto text-center">
+          <h4>Lantai 2</h4>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-8 mx-auto text-center">
+          <button id="B1">B01</button>
+          <button id="B2">B02</button>
+          <button id="B3">B03</button>
+          <button id="B4">B04</button>
+          <button id="B5">B05</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-8 mx-auto text-center">
+          <button id="B6">B06</button>
+          <button id="B7">B07</button>
+          <button id="B8">B08</button>
+          <button id="B9">B09</button>
+          <button id="B10">B10</button>
+        </div>
+      </div>
+    </div>
+  </div> 
+  <div class="section">
+    <div class="container text-center">
+      <div class="row">
+        <div class="col-md-8 mx-auto text-center">
+          <h2>Pilih Tempat Parkir</h2>
+          <h4>Tempat parkir pilihan anda adalah</h4>
+
+          <!-- <a href="#" class="btn btn-primary btn-lg">
+            Masuk Parkir
+          </a> -->
+          <!-- <div class="row"> -->
+            
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4 mx-auto text-center">
+            <div class="form-group has-default text-center">
+              <input type="text" class="form-control text-center" id="pilihan" placeholder="Contoh: A01">
+            </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 mx-auto text-center">
+          <button class="btn btn-primary btn-lg" onclick="updateSlot()">
+            Pilih Lokasi Parkir
+          </button>
+        </div>
+      </div>
+    </div>
+  </div> 
+
+</body>
+<script>
+  window.onload = () => {getSlotParkir(); getTiket();}
+</script>
+
+</html>
