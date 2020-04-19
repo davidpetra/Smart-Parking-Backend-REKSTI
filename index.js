@@ -247,7 +247,7 @@ function getPembayaranID(id) {
 
 function makePembayaran(data) {
     return new Promise((resolve, reject) => {
-        request('http://localhost:3000/tiket/' + data.id_tiket, function (error, response, body) {
+        request('https://smartparking-reksti.herokuapp.com/tiket/' + data.id_tiket, function (error, response, body) {
             let isi = JSON.parse(body);
             let jam_masuk = isi['jam_masuk'];
             let jam_keluar = isi['jam_keluar'];
@@ -355,9 +355,9 @@ function deletePembayaran(id) {
 }
 
 // ENDPOINT API
-app.get("/", function (req, res) {
-    res.redirect("/parkiran")
-});
+// app.get("/", function (req, res) {
+//     res.redirect("/parkiran")
+// });
 
 // Parkiran
 app.get("/parkiran", function (req, res) {
