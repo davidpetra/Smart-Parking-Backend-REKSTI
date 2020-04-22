@@ -123,6 +123,44 @@
       }
     },
     "/parkiran/{id}": {
+      "get": {
+        "tags": [
+          "parkiran"
+        ],
+        "summary": "Menampilkan data slot parkir berdasarkan id slot",
+        "description": "Menampilkan data slot parkir berdasarkan berdasarkan id slot",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "slot_parkir",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil menampilkan data slot parkir berdasarkan id slot",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Parkiran"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Data slot parkir yang kamu cari tidak ditemukan"
+          }
+        }
+      },
       "put": {
         "tags": [
           "parkiran"
