@@ -110,6 +110,18 @@ function getParkiranIsi() {
     });
 }
 
+function getIDSlotParkir(id) {
+    return new Promise((resolve, reject) => {
+        db.one("SELECT * FROM parkiran WHERE slot_parkir = $1", id)
+            .then(data => {
+                resolve(data);
+            })
+            .catch(err => {
+                reject(err);
+            });
+    });
+}
+
 function updateSlotParkiran(id, data) {
     return new Promise((resolve, reject) => {
         db.one(
@@ -402,6 +414,35 @@ app.get("/parkiran/isi", function (req, res) {
                 "response-code": "500",
                 message: "Error 500: Internal server error!"
             });
+        });
+});
+
+app.get("/parkiran/:id", function (req, res) {
+    getIDSlotParkir(req.params.id)
+        .then(result => {
+            console.log("Success GET slot parkiran by ID:", req.params.id);
+            res.json(result);
+        })
+        .catch(err => {
+            console.log(err);
+            if (err instanceof QueryResultError) {
+                if (err.code === QueryResultCode.noData) {
+                    res.json({
+                        "response-code": "404",
+                        message: "Error 404: Tidak ada data yang ditemukan!"
+                    });
+                } else {
+                    res.json({
+                        "response-code": "500",
+                        message: "Error 500: Internal server error!"
+                    });
+                }
+            } else {
+                res.json({
+                    "response-code": "500",
+                    message: "Error 500: Internal server error!"
+                });
+            }
         });
 });
 
