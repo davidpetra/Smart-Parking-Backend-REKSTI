@@ -323,8 +323,6 @@ function makePembayaran(data) {
                     reject(err);
                 });
         });
-
-
     });
 }
 
@@ -367,9 +365,9 @@ function deletePembayaran(id) {
 }
 
 // ENDPOINT API
-// app.get("/", function (req, res) {
-//     res.redirect("/parkiran")
-// });
+app.get("/", function (req, res) {
+    res.send("<h1>Smart Parking Back-End</h1>")
+});
 
 // Parkiran
 app.get("/parkiran", function (req, res) {
@@ -449,8 +447,8 @@ app.get("/parkiran/:id", function (req, res) {
 app.put("/parkiran/:id", function (req, res) {
     updateSlotParkiran(req.params.id, req.body)
         .then(result => {
-            console.log();
             console.log(result);
+            console.log();
             res.json({
                 "response-code": "200",
                 message: "Berhasil mengupdate slot parkiran!",
@@ -464,6 +462,7 @@ app.put("/parkiran/:id", function (req, res) {
                 message: "Error 500: Internal server error!"
             });
         });
+
 });
 
 // Tiket
@@ -531,22 +530,38 @@ app.post("/tiket", function (req, res) {
 });
 
 app.put("/tiket/:id", function (req, res) {
-    updateTiket(req.params.id)
-        .then(result => {
-            console.log();
+    request('https://smartparking-reksti.herokuapp.com/tiket/' + req.params.id, function (error, response, body) {
+        let detail = JSON.parse(body);
+        let out = detail['jam_keluar']
+
+        if (out != null) {
+            console.log()
+            console.log("Request GAGAL! Tiket parkir sudah pernah dicetak keluar sebelumnya!")
+            console.log(detail)
             res.json({
-                "response-code": "200",
-                message: "Berhasil mengupdate data tiket!",
-                result
-            });
-        })
-        .catch(err => {
-            console.log(err);
-            res.json({
-                "response-code": "500",
-                message: "Error 500: Internal server error!"
-            });
-        });
+                "response-code": "400",
+                message: "Bad Request! Request GAGAL, tiket parkir sudah pernah dicetak keluar sebelumnya!",
+                detail
+            })
+        } else {
+            updateTiket(req.params.id)
+                .then(result => {
+                    console.log();
+                    res.json({
+                        "response-code": "200",
+                        message: "Berhasil mengupdate data tiket!",
+                        result
+                    });
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.json({
+                        "response-code": "500",
+                        message: "Error 500: Internal server error!"
+                    });
+                });
+        }
+    });
 });
 
 app.delete("/tiket/:id", function (req, res) {
@@ -673,4 +688,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log('Our app is running on port ', PORT);
 });
-//app.listen(3000);
